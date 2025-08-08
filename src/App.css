@@ -1,0 +1,100 @@
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: #f5f9ff;
+  font-family: Arial, sans-serif;
+  overflow: hidden; /* Evita scroll no deseado */
+}
+
+/* Contenedor principal centrado */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  width: 100%;
+  padding: 500px;
+}
+
+/* Formulario de inicio de sesión */
+.login-form {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Logo */
+.logo {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+/* Campos del login */
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Botón */
+.login-form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.login-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Vista después del login */
+.dashboard {
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Input de imágenes */
+.dashboard input[type="file"] {
+  margin-top: 15px;
+}
+
+/* Galería de imágenes */
+.image-gallery {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.image-gallery img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
