@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import CryptoJS from 'crypto-js';
 import './App.css';
-import logo from './assets/biosync-logo.png'; // Pon tu logo aquí
+import logo from './assets/biosync-logo.png'; // Asegúrate de tener tu logo aquí
 
 function App() {
-  // Estado para controlar modo login o registro
   const [isRegistering, setIsRegistering] = useState(false);
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [images, setImages] = useState([]);
+  const [zoomImage, setZoomImage] = useState(null);
 
-  // Usuarios registrados en memoria (por simplicidad, en estado)
-  // En producción se debe usar base de datos segura
+  // Usuarios guardados en estado (solo para demo, en producción backend)
   const [users, setUsers] = useState([]);
 
   // Manejar login
@@ -61,11 +60,21 @@ function App() {
     setConfirmPasswordInput('');
   };
 
-  // Manejar subida de imágenes
+  // Subida de imágenes
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     const newImages = files.map((file) => URL.createObjectURL(file));
     setImages((prev) => [...prev, ...newImages]);
+  };
+
+  // Abrir modal zoom
+  const openZoom = (imgSrc) => {
+    setZoomImage(imgSrc);
+  };
+
+  // Cerrar modal zoom
+  const closeZoom = () => {
+    setZoomImage(null);
   };
 
   // Cambiar entre login y registro
@@ -135,9 +144,27 @@ function App() {
           />
           <div className="image-gallery">
             {images.map((img, i) => (
-              <img key={i} src={img} alt={`Historial ${i + 1}`} />
+              <img
+                key={i}
+                src={img}
+                alt={`Historial ${i + 1}`}
+                onClick={() => openZoom(img)}
+                style={{ cursor: 'pointer' }}
+              />
             ))}
           </div>
+
+          {zoomImage && (
+            <div className="modal" onClick={closeZoom}>
+              <span className="close-button" onClick={closeZoom}>&times;</span>
+              <img
+                className="modal-content"
+                src={zoomImage}
+                alt="Zoomed"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
