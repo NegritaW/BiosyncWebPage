@@ -12,7 +12,7 @@ function App() {
   const [images, setImages] = useState([]);
   const [zoomImage, setZoomImage] = useState(null);
 
-  // Usuarios guardados en estado (solo para demo, en producción backend)
+  // Usuarios guardados en estado (solo demo, en producción backend)
   const [users, setUsers] = useState([]);
 
   // Manejar login
@@ -93,7 +93,7 @@ function App() {
           onSubmit={isRegistering ? handleRegister : handleLogin}
         >
           <img src={logo} alt="Logo Biosync" className="logo" />
-          <h2>{isRegistering ? 'Registro' : 'Inicio de Sesión'}</h2>
+          <h2>{isRegistering ? "Registro" : "Inicio de Sesión"}</h2>
 
           <input
             type="email"
@@ -119,52 +119,83 @@ function App() {
             />
           )}
 
-          <button type="submit">{isRegistering ? 'Registrarse' : 'Ingresar'}</button>
+          <button type="submit">
+            {isRegistering ? "Registrarse" : "Ingresar"}
+          </button>
 
           <p className="toggle-text">
-            {isRegistering ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}
+            {isRegistering ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?"}
             <button
               type="button"
               className="toggle-button"
               onClick={toggleForm}
             >
-              {isRegistering ? ' Inicia sesión' : ' Regístrate'}
+              {isRegistering ? " Inicia sesión" : " Regístrate"}
             </button>
           </p>
         </form>
       ) : (
-        <div className="dashboard">
-          <h2>Bienvenido a Biosync</h2>
-          <p>Sube tus historiales médicos (imágenes):</p>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageUpload}
-          />
-          <div className="image-gallery">
-            {images.map((img, i) => (
-              <img
-                key={i}
-                src={img}
-                alt={`Historial ${i + 1}`}
-                onClick={() => openZoom(img)}
-                style={{ cursor: 'pointer' }}
-              />
-            ))}
+        <div className="dashboard-container">
+          {/* Barra superior */}
+          <header className="top-bar">
+            <div className="top-bar-content">
+              <img src={logo} alt="Logo Biosync" className="top-logo" />
+              <p className="about-text">
+                Al cubrir su rostro con el con el cráneo de su madre, su
+                expresión queda velada.La única emoción que le delata es su
+                llanto constante. Al cubrir su rostro con el con el cráneo de su
+                madre, su expresión queda velada.La única emoción que le delata
+                es su llanto constante.
+              </p>
+            </div>
+          </header>
+
+          {/* Contenido principal */}
+          <div className="dashboard">
+            <h2>Bienvenido a Biosync</h2>
+            <p>Sube tus historiales médicos (imágenes):</p>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+            />
+            <div className="image-gallery">
+              {images.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  alt={`Historial ${i + 1}`}
+                  onClick={() => openZoom(img)}
+                  style={{ cursor: "pointer" }}
+                />
+              ))}
+            </div>
+
+            {zoomImage && (
+              <div className="modal" onClick={closeZoom}>
+                <span className="close-button" onClick={closeZoom}>
+                  &times;
+                </span>
+                <img
+                  className="modal-content"
+                  src={zoomImage}
+                  alt="Zoomed"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
           </div>
 
-          {zoomImage && (
-            <div className="modal" onClick={closeZoom}>
-              <span className="close-button" onClick={closeZoom}>&times;</span>
-              <img
-                className="modal-content"
-                src={zoomImage}
-                alt="Zoomed"
-                onClick={(e) => e.stopPropagation()}
-              />
+          {/* Barra inferior */}
+          <footer className="bottom-bar">
+            <div className="bottom-bar-content">
+              <a href="#contacto">Contacto</a>
+              <a href="#facebook">Facebook</a>
+              <a href="#instagram">Instagram</a>
+              <a href="#linkedin">LinkedIn</a>
             </div>
-          )}
+          </footer>
         </div>
       )}
     </div>
