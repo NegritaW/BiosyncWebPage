@@ -1,22 +1,22 @@
-/* Contenedor general (Login y Registro) */
+/* Contenedor principal */
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Centrado vertical */
+  justify-content: center;
   font-family: Arial, sans-serif;
-  height: 100vh; /* Ocupa toda la altura */
-  width: 100vw; /* Ocupa todo el ancho */
+  height: 100vh;
+  width: 100vw;
   background-color: #f4f4f4;
   overflow: hidden;
 }
 
-/* Formulario de login/registro */
+/* Formulario login / registro */
 .login-form {
   background: white;
   padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,6 +30,14 @@
   width: 250px;
 }
 
+.error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: -0.3rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
 .login-form button {
   background-color: #4cafef;
   color: white;
@@ -38,9 +46,8 @@
   border-radius: 8px;
   cursor: pointer;
   margin-top: 1rem;
-  width: 100%; /* Igual ancho para ambos botones */
-  max-width: 250px; /* Que no crezca demasiado */
-  text-align: center;
+  width: 100%;
+  max-width: 250px;
 }
 
 .login-form button:hover {
@@ -50,7 +57,7 @@
 .toggle-text {
   margin-top: 1rem;
   font-size: 0.9rem;
-  text-align: center; /* Centrado */
+  text-align: center;
 }
 
 .toggle-button {
@@ -59,17 +66,15 @@
   color: #4cafef;
   cursor: pointer;
   font-weight: bold;
-  display: block; /* Para que respete el centrado */
-  margin: 0 auto; /* Centrar horizontalmente */
 }
 
-/* Logo del login */
+/* Logo login */
 .logo {
   width: 100px;
   margin-bottom: 1rem;
 }
 
-/* Contenedor del dashboard */
+/* Dashboard */
 .dashboard-container {
   display: flex;
   flex-direction: column;
@@ -80,14 +85,12 @@
   color: black;
 }
 
-/* Barra superior fija */
 .top-bar {
   background-color: #16c00a;
   color: white;
   padding: 1rem;
   display: flex;
-  align-items: center;
-  justify-content: center; /* Centra el contenido */
+  justify-content: center;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -97,13 +100,10 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  max-width: 1200px;
-  width: 100%;
-  justify-content: center;
 }
 
 .top-logo {
-  width: 60px;
+  width: 100px;
 }
 
 .about-text {
@@ -112,35 +112,62 @@
   text-align: center;
 }
 
-/* Contenido principal del dashboard */
 .dashboard {
   flex: 1;
   padding: 2rem;
+  padding-top: 5rem; /* margen para no tapar imágenes con barra */
+  padding-bottom: 5rem; /* margen para barra inferior */
   text-align: center;
-  width: 100%;
 }
 
-/* Galería de imágenes */
+/* Galería */
 .image-gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 15px;
   margin-top: 1rem;
   justify-content: center;
 }
 
-.image-gallery img {
+.image-wrapper {
+  position: relative;
+}
+
+.image-wrapper img {
   max-width: 150px;
   border-radius: 8px;
   transition: transform 0.2s;
   cursor: pointer;
 }
 
-.image-gallery img:hover {
+.image-wrapper img:hover {
   transform: scale(1.05);
 }
 
-/* Modal de zoom */
+.delete-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255, 0, 0, 0.8);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-size: 14px;
+  
+  display: flex;              /* Activa flexbox */
+  justify-content: center;    /* Centra horizontalmente */
+  align-items: center;        /* Centra verticalmente */
+  padding: 0;                 /* Elimina espacio extra */
+}
+
+.delete-button:hover {
+  background: red;
+}
+
+/* Modal zoom */
 .modal {
   position: fixed;
   top: 0;
@@ -151,7 +178,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10;
+  z-index: 200;
 }
 
 .modal-content {
@@ -169,7 +196,7 @@
   cursor: pointer;
 }
 
-/* Barra inferior fija */
+/* Barra inferior */
 .bottom-bar {
   background-color: #16c00a;
   color: white;
@@ -178,7 +205,6 @@
   justify-content: center;
   position: sticky;
   bottom: 0;
-  z-index: 100;
 }
 
 .bottom-bar-content {
@@ -189,7 +215,6 @@
 .bottom-bar-content a {
   color: white;
   text-decoration: none;
-  font-size: 0.9rem;
 }
 
 .bottom-bar-content a:hover {
