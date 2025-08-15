@@ -157,10 +157,10 @@
   cursor: pointer;
   font-size: 14px;
   
-  display: flex;              /* Activa flexbox */
-  justify-content: center;    /* Centra horizontalmente */
-  align-items: center;        /* Centra verticalmente */
-  padding: 0;                 /* Elimina espacio extra */
+  display: flex;              
+  justify-content: center;    
+  align-items: center;        
+  padding: 0;                 
 }
 
 .delete-button:hover {

@@ -12,21 +12,29 @@ function App() {
   const [images, setImages] = useState([]);
   const [zoomImage, setZoomImage] = useState(null);
   const [users, setUsers] = useState([]);
-  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({ email: '', password: '', confirmPassword: '' });
 
   // Validar email
   const validateEmail = (email) => {
     if (!email.includes('@') || !email.includes('.')) {
-      return 'El correo debe contener "@" y un punto.';
+      return 'El correo debe contener "@" y un "."';
     }
     return '';
   };
 
   // Validar contraseña
   const validatePassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).+$/;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).{8,}$/;
     if (!regex.test(password)) {
-      return 'Debe tener mayúscula, minúscula y un número o símbolo.';
+      return 'Debe tener mayúscula, minúscula, un número o símbolo y mínimo 8 caracteres.';
+    }
+    return '';
+  };
+
+  // Validar confirmación de contraseña
+  const validateConfirmPassword = (pass, confirmPass) => {
+    if (pass !== confirmPass) {
+      return 'Las contraseñas no coinciden.';
     }
     return '';
   };
@@ -38,7 +46,7 @@ function App() {
     const passwordError = validatePassword(passwordInput);
 
     if (emailError || passwordError) {
-      setErrors({ email: emailError, password: passwordError });
+      setErrors({ ...errors, email: emailError, password: passwordError });
       return;
     }
 
@@ -63,14 +71,10 @@ function App() {
     e.preventDefault();
     const emailError = validateEmail(emailInput);
     const passwordError = validatePassword(passwordInput);
+    const confirmPasswordError = validateConfirmPassword(passwordInput, confirmPasswordInput);
 
-    if (emailError || passwordError) {
-      setErrors({ email: emailError, password: passwordError });
-      return;
-    }
-
-    if (passwordInput !== confirmPasswordInput) {
-      alert('Las contraseñas no coinciden');
+    if (emailError || passwordError || confirmPasswordError) {
+      setErrors({ email: emailError, password: passwordError, confirmPassword: confirmPasswordError });
       return;
     }
 
@@ -97,9 +101,12 @@ function App() {
     setImages((prev) => [...prev, ...newImages]);
   };
 
-  // Borrar imagen
+  // Borrar imagen con confirmación
   const deleteImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    const confirmDelete = window.confirm('¿Seguro que quieres eliminar esta imagen?');
+    if (confirmDelete) {
+      setImages((prev) => prev.filter((_, i) => i !== index));
+    }
   };
 
   // Zoom
@@ -128,7 +135,10 @@ function App() {
             type="email"
             placeholder="Correo electrónico"
             value={emailInput}
-            onChange={(e) => setEmailInput(e.target.value)}
+            onChange={(e) => {
+              setEmailInput(e.target.value);
+              setErrors({ ...errors, email: validateEmail(e.target.value) });
+            }}
             required
           />
           {errors.email && <p className="error-message">{errors.email}</p>}
@@ -137,7 +147,10 @@ function App() {
             type="password"
             placeholder="Contraseña"
             value={passwordInput}
-            onChange={(e) => setPasswordInput(e.target.value)}
+            onChange={(e) => {
+              setPasswordInput(e.target.value);
+              setErrors({ ...errors, password: validatePassword(e.target.value) });
+            }}
             required
           />
           {errors.password && (
@@ -145,13 +158,24 @@ function App() {
           )}
 
           {isRegistering && (
-            <input
-              type="password"
-              placeholder="Confirmar contraseña"
-              value={confirmPasswordInput}
-              onChange={(e) => setConfirmPasswordInput(e.target.value)}
-              required
-            />
+            <>
+              <input
+                type="password"
+                placeholder="Confirmar contraseña"
+                value={confirmPasswordInput}
+                onChange={(e) => {
+                  setConfirmPasswordInput(e.target.value);
+                  setErrors({
+                    ...errors,
+                    confirmPassword: validateConfirmPassword(passwordInput, e.target.value)
+                  });
+                }}
+                required
+              />
+              {errors.confirmPassword && (
+                <p className="error-message">{errors.confirmPassword}</p>
+              )}
+            </>
           )}
 
           <button type="submit">
@@ -176,9 +200,9 @@ function App() {
               <img src={logo} alt="Logo Biosync" className="top-logo" />
               <p className="about-text">
                 Al cubrir su rostro con el con el cráneo de su madre, su
-                expresión queda velada.La única emoción que le delata es su
+                expresión queda velada. La única emoción que le delata es su
                 llanto constante. Al cubrir su rostro con el con el cráneo de su
-                madre, su expresión queda velada.La única emoción que le delata
+                madre, su expresión queda velada. La única emoción que le delata
                 es su llanto constante.
               </p>
             </div>
@@ -186,7 +210,7 @@ function App() {
 
           <div className="dashboard">
             <h2>Bienvenido a Biosync</h2>
-            <p>Sube tus historiales médicos(imágenes):</p>
+            <p>Sube tus historiales médicos (imágenes):</p>
             <input
               type="file"
               accept="image/*"
