@@ -5,14 +5,19 @@ import logo from './assets/biosync-logo.png';
 
 function App() {
   const [isRegistering, setIsRegistering] = useState(false);
-  const [emailInput, setEmailInput] = useState('');
+  const [identifierInput, setIdentifierInput] = useState(''); // email o teléfono
   const [passwordInput, setPasswordInput] = useState('');
   const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [images, setImages] = useState([]);
   const [zoomImage, setZoomImage] = useState(null);
   const [users, setUsers] = useState([]);
-  const [errors, setErrors] = useState({ email: '', password: '', confirmPassword: '' });
+  const [errors, setErrors] = useState({
+    identifier: '',
+    password: '',
+    confirmPassword: '',
+    file: ''
+  });
 
   // Validar email
   const validateEmail = (email) => {
@@ -22,11 +27,27 @@ function App() {
     return '';
   };
 
+  // Validar teléfono
+  const validatePhone = (phone) => {
+    if (!phone.startsWith('+569') || phone.length !== 12) {
+      return 'El teléfono debe comenzar con +569 y tener 12 caracteres.';
+    }
+    return '';
+  };
+
+  // Validar identificador (correo o teléfono)
+  const validateIdentifier = (value) => {
+    if (value.startsWith('+')) {
+      return validatePhone(value);
+    }
+    return validateEmail(value);
+  };
+
   // Validar contraseña
   const validatePassword = (password) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).{8,}$/;
     if (!regex.test(password)) {
-      return 'Debe tener mayúscula, minúscula, un número o símbolo y mínimo 8 caracteres.';
+      return 'Debe tener mínimo 8 caracteres, mayúscula, minúscula y un número o símbolo.';
     }
     return '';
   };
@@ -42,63 +63,83 @@ function App() {
   // Login
   const handleLogin = (e) => {
     e.preventDefault();
-    const emailError = validateEmail(emailInput);
+    const identifierError = validateIdentifier(identifierInput);
     const passwordError = validatePassword(passwordInput);
 
-    if (emailError || passwordError) {
-      setErrors({ ...errors, email: emailError, password: passwordError });
+    if (identifierError || passwordError) {
+      setErrors({ ...errors, identifier: identifierError, password: passwordError });
       return;
     }
 
-    const hashedEmail = CryptoJS.SHA256(emailInput).toString();
+    const hashedIdentifier = CryptoJS.SHA256(identifierInput).toString();
     const hashedPassword = CryptoJS.SHA256(passwordInput).toString();
     const user = users.find(
-      (u) => u.emailHash === hashedEmail && u.passwordHash === hashedPassword
+      (u) => u.identifierHash === hashedIdentifier && u.passwordHash === hashedPassword
     );
 
     if (user) {
       setLoggedIn(true);
-      setEmailInput('');
+      setIdentifierInput('');
       setPasswordInput('');
       setErrors({});
     } else {
-      alert('Correo o contraseña incorrectos');
+      alert('Correo/Teléfono o contraseña incorrectos');
     }
   };
 
   // Registro
   const handleRegister = (e) => {
     e.preventDefault();
-    const emailError = validateEmail(emailInput);
+    const identifierError = validateIdentifier(identifierInput);
     const passwordError = validatePassword(passwordInput);
     const confirmPasswordError = validateConfirmPassword(passwordInput, confirmPasswordInput);
 
-    if (emailError || passwordError || confirmPasswordError) {
-      setErrors({ email: emailError, password: passwordError, confirmPassword: confirmPasswordError });
+    if (identifierError || passwordError || confirmPasswordError) {
+      setErrors({
+        ...errors,
+        identifier: identifierError,
+        password: passwordError,
+        confirmPassword: confirmPasswordError
+      });
       return;
     }
 
-    const hashedEmail = CryptoJS.SHA256(emailInput).toString();
-    if (users.some((u) => u.emailHash === hashedEmail)) {
+    const hashedIdentifier = CryptoJS.SHA256(identifierInput).toString();
+    if (users.some((u) => u.identifierHash === hashedIdentifier)) {
       alert('Usuario ya registrado');
       return;
     }
 
     const hashedPassword = CryptoJS.SHA256(passwordInput).toString();
-    setUsers([...users, { emailHash: hashedEmail, passwordHash: hashedPassword }]);
+    setUsers([...users, { identifierHash: hashedIdentifier, passwordHash: hashedPassword }]);
     alert('Registro exitoso. Ahora inicia sesión.');
     setIsRegistering(false);
-    setEmailInput('');
+    setIdentifierInput('');
     setPasswordInput('');
     setConfirmPasswordInput('');
     setErrors({});
   };
 
-  // Subir imágenes
+  // Subir imágenes con límite de 2 MB
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    const newImages = files.map((file) => URL.createObjectURL(file));
-    setImages((prev) => [...prev, ...newImages]);
+    let validFiles = [];
+    let errorMsg = '';
+
+    files.forEach((file) => {
+      if (file.size > 2 * 1024 * 1024) {
+        errorMsg = `El archivo "${file.name}" supera los 2 MB.`;
+      } else {
+        validFiles.push(URL.createObjectURL(file));
+      }
+    });
+
+    if (errorMsg) {
+      setErrors((prev) => ({ ...prev, file: errorMsg }));
+    } else {
+      setErrors((prev) => ({ ...prev, file: '' }));
+      setImages((prev) => [...prev, ...validFiles]);
+    }
   };
 
   // Borrar imagen con confirmación
@@ -115,7 +156,7 @@ function App() {
 
   const toggleForm = () => {
     setIsRegistering(!isRegistering);
-    setEmailInput('');
+    setIdentifierInput('');
     setPasswordInput('');
     setConfirmPasswordInput('');
     setErrors({});
@@ -132,16 +173,16 @@ function App() {
           <h2>{isRegistering ? "Registro" : "Inicio de Sesión"}</h2>
 
           <input
-            type="email"
-            placeholder="Correo electrónico"
-            value={emailInput}
+            type="text"
+            placeholder="Correo electrónico o teléfono (+569...)"
+            value={identifierInput}
             onChange={(e) => {
-              setEmailInput(e.target.value);
-              setErrors({ ...errors, email: validateEmail(e.target.value) });
+              setIdentifierInput(e.target.value);
+              setErrors({ ...errors, identifier: validateIdentifier(e.target.value) });
             }}
             required
           />
-          {errors.email && <p className="error-message">{errors.email}</p>}
+          {errors.identifier && <p className="error-message">{errors.identifier}</p>}
 
           <input
             type="password"
@@ -167,7 +208,7 @@ function App() {
                   setConfirmPasswordInput(e.target.value);
                   setErrors({
                     ...errors,
-                    confirmPassword: validateConfirmPassword(passwordInput, e.target.value)
+                    confirmPassword: validateConfirmPassword(passwordInput, e.target.value),
                   });
                 }}
                 required
@@ -199,11 +240,9 @@ function App() {
             <div className="top-bar-content">
               <img src={logo} alt="Logo Biosync" className="top-logo" />
               <p className="about-text">
-                Al cubrir su rostro con el con el cráneo de su madre, su
+                Al cubrir su rostro con el cráneo de su madre, su
                 expresión queda velada. La única emoción que le delata es su
-                llanto constante. Al cubrir su rostro con el con el cráneo de su
-                madre, su expresión queda velada. La única emoción que le delata
-                es su llanto constante.
+                llanto constante.
               </p>
             </div>
           </header>
@@ -217,6 +256,8 @@ function App() {
               multiple
               onChange={handleImageUpload}
             />
+            {errors.file && <p className="error-message">{errors.file}</p>}
+
             <div className="image-gallery">
               {images.map((img, i) => (
                 <div key={i} className="image-wrapper">

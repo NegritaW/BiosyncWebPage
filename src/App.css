@@ -86,7 +86,7 @@
 }
 
 .top-bar {
-  background-color: #16c00a;
+  background-color: #32A4AC;
   color: white;
   padding: 1rem;
   display: flex;
@@ -198,7 +198,7 @@
 
 /* Barra inferior */
 .bottom-bar {
-  background-color: #16c00a;
+  background-color: #32A4AC;
   color: white;
   padding: 0.8rem;
   display: flex;
